@@ -1,4 +1,4 @@
-function taskItem({
+function TaskItem({
     task,onDelete,onToggle
 }) {
     return(
@@ -24,4 +24,4 @@ function taskItem({
     );
 }
 
-export default taskItem;
+export default TaskItem;

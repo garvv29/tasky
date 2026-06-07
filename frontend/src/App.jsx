@@ -1,12 +1,16 @@
 import { useState,useEffect } from 'react'
+import {getTasks,createTask,deleteTask,toggleTask} from './services/api' 
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
 
 function App() {
-  const [tasks,setTasks] = useState([]);
-  const [title,setTitle] = useState("");
 
-  // useEffect(()=>{
-  //   getTasks();
-  // },[]);
+const [tasks, setTasks] = useState([]);
+const [title, setTitle] = useState("");
+
+  useEffect(()=>{
+    loadTasks();
+  },[]);
 
 //   const getTasks = async () =>{
 //   const res = await fetch("http://localhost:5000/tasks");
@@ -57,61 +61,33 @@ function App() {
 
 // };
 
+async function loadTasks() {
+  const data = await getTasks();
+  setTasks(data);
+}
+
+async function addTasks(taskTitle) {
+  await createTask(taskTitle);
+  loadTasks();
+}
+
+async function removeTasks(id) {
+  await deleteTask(id);
+  loadTasks();
+}
+
+async function handleToggleTask(id) {
+  await toggleTask(id);
+  loadTasks();
+}
+
+
+
 return(
   <div>
-
     <h1>Task Manager</h1>
-
-    <input
-      value={title}
-      onChange={(e)=>
-        setTitle(e.target.value)
-      }
-    />
-
-    <button onClick={addTasks}>
-      Add
-    </button>
-
-    <ul>
-
-      {tasks.map(task => (
-
-        <li key={task.id}>
-
-          <span
-            style={{
-              textDecoration:
-                task.completed
-                ? "line-through"
-                : "none"
-            }}
-          >
-            {task.title}
-          </span>
-
-          <button
-            onClick={() =>
-              toggleTask(task.id)
-            }
-          >
-            Toggle
-          </button>
-
-          <button
-            onClick={() =>
-              deleteTask(task.id)
-            }
-          >
-            Delete
-          </button>
-
-        </li>
-
-      ))}
-
-    </ul>
-
+    <TaskForm onAdd={addTasks}/>
+    <TaskList tasks={tasks} onDelete={removeTasks} onToggle={handleToggleTask} />
   </div>
 );
 }
